@@ -33,9 +33,9 @@ The `notebooks` folder contains Jupyter notebooks with PySpark code for operatin
 
 The `examples` folder provides practical demonstrations of how to iterate over a data source and process data. It includes sample scripts or notebooks showcasing specific use cases or scenarios.
 
-### 6. `docs/`
+#### 6. `docs/`
 
-Documentation related to the project, including DAG documentation, operator documentation, or any other relevant information, can be found in this folder.
+Documentation related to the project or datasource, including DAG documentation, operator documentation, or any other relevant information, can be found in this folder.
 
 
 ## Examples
