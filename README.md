@@ -20,7 +20,7 @@ Welcome to the Data Lake repository! A Data Lake is a centralized repository tha
 amounts of raw data in its native format until it's needed. This repository is designed to help you understand the
 concept of a Data Lake and provide examples to get you started.  
 
-### Folder Structure
+## Folder Structure
 #### 1. `dags/`
 
 This folder contains all the Directed Acyclic Graphs (DAGs) representing different data pipelines. Each DAG is defined in a separate Python file.
@@ -33,10 +33,41 @@ The `notebooks` folder contains Jupyter notebooks with PySpark code for operatin
 
 The `examples` folder provides practical demonstrations of how to iterate over a data source and process data. It includes sample scripts or notebooks showcasing specific use cases or scenarios.
 
-#### 6. `docs/`
+#### 4. `devops/`
 
-Documentation related to the project or datasource, including DAG documentation, operator documentation, or any other relevant information, can be found in this folder.
+The `devops` folder contains instructions and configurations for setting up the project in a DevOps environment. It includes information on deployment, continuous integration, and other DevOps-related practices.
 
+#### 5. `crawlers/`
 
-## Examples
-### 1. Data Ingestion
+The `crawlers` folder contains source code for crawlers and instructions for setting them up locally or on a server. Crawlers are responsible for retrieving data from external sources.
+
+## Getting Started
+
+### Setup
+1. Install packages
+
+```bash
+./chmod +x requirements.apt.sh
+./requirements.apt.sh
+```
+
+2. Setup and activate virtualenv
+bash
+```commandline
+python -m venv venv
+source venv/bin/activate
+```
+
+3. Install libraries
+```bash
+pip install -r requirements.pip.txt
+```
+
+### Naming Convention
+Dag: action_datasource  
+Ex1: crawler_lavita_companies.py  
+Ex2: crawler_update_lavita_companies.py
+
+Notebooks: datasource  
+Ex1: bol.ipynb  
+Ex2: openownership.ipynb
