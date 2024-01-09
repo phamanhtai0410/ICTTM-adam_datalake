@@ -41,6 +41,10 @@ The `devops` folder contains instructions and configurations for setting up the 
 
 The `crawlers` folder contains source code for crawlers and instructions for setting them up locally or on a server. Crawlers are responsible for retrieving data from external sources.
 
+#### 6. `tools/`
+
+The `tools` folder contains some tools helpful for developer.
+
 ## Getting Started
 
 ### Setup
