@@ -54,6 +54,10 @@ Crawlers are responsible for retrieving data from external sources.
 
 The `tools` folder contains some tools helpful for developer.
 
+#### 7. `docs/`
+
+The `docs` folder documents about how each data source is crawled and processed
+
 ## Getting Started
 
 ### Setup
