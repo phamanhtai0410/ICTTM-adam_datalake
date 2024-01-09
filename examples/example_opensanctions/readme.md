@@ -70,4 +70,4 @@ cp examples/example_opensanctions/dags/crawler_opensanction.py ~/airflow/dags
 - Open MinIO Web Interface  http://localhost:9000. Check upload file and folders
 
 ## 3. Notebook example
-- Open file [operate_opensanctions.ipynb](notebook%2Foperate_opensanctions.ipynb) and running example
+- Open file [example_pipeline_opensanctions.ipynb](notebook%2Fexample_pipeline_opensanctions.ipynb)[operate_opensanctions.ipynb](notebook%2Foperate_opensanctions.ipynb) and running example
