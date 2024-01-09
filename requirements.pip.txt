@@ -3,3 +3,4 @@ pyspark
 delta-spark
 requests
 apache-airflow
+notebook
