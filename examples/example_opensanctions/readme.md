@@ -26,6 +26,8 @@ pip install -r requirements.pip.txt
 airflow webserver -p 8080
 ```
 
+- Default username is "admin", password is located in file "~/airflow/standalone_admin_password.txt"
+
 ### Start Docker MinIO
 
 Start MinIO using Docker, open new terminal and type:
@@ -52,9 +54,10 @@ AccessKeys: demo-access-key
 SecretKeys:  demo-secret-key
 ```
 
-Click on the "Create" button.
+- Click on the "Create" button.
+- Create Bucket name "warehouse": Click on the "Buckets" menu on the left-hand side. Click "Create Bucket".
 
-## 2. Run example
+## 2. Dags example
 
 - Copy file in folder dags to $HOME_AIRFLOW/dags folder, normally in ~/airflow. Maybe we need create:
 
@@ -64,3 +67,4 @@ cp examples/example_opensanctions/dags/crawler_opensanction.py ~/airflow/dags
 ```
 
 - Open Airflow Web Interface http://localhost:9000. Find your dags and run at first time
+- Open MinIO Web Interface  http://localhost:9000. Check upload file and folders 
