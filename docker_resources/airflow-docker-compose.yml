@@ -39,11 +39,12 @@ services:
     #      - ./config:/opt/airflow/config
     #      - ./plugins:/opt/airflow/plugins
       - ../af_requirements.txt:/bitnami/python/requirements.txt
-
+    depends_on:
+      - airflow
 
   airflow-worker:
-#    image: docker.io/bitnami/airflow-worker:2
-    image: airflow-worker-java:2
+    image: docker.io/bitnami/airflow-worker:2
+    # image: airflow-worker-java:2
     environment:
       - AIRFLOW_DATABASE_NAME=bitnami_airflow
       - AIRFLOW_DATABASE_USERNAME=bn_airflow
@@ -56,11 +57,15 @@ services:
       - logs_data:/opt/bitnami/airflow/logs
     #      - ./config:/opt/airflow/config
     #      - ./plugins:/opt/airflow/plugins
-      - ./af_requirements.txt:/bitnami/python/requirements.txt
-
+      - ../af_requirements.txt:/bitnami/python/requirements.txt
+    depends_on:
+      - airflow
 
   airflow:
-    image: docker.io/bitnami/airflow:2
+    # image: docker.io/bitnami/airflow:2
+    build: 
+      context: ./custom_docker_images
+      dockerfile: Dockerfile-airflow
     environment:
       - AIRFLOW_DATABASE_NAME=bitnami_airflow
       - AIRFLOW_DATABASE_USERNAME=bn_airflow
@@ -70,8 +75,8 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - ../dags:/opt/bitnami/airflow/dags
-      - logs_data:/opt/bitnami/airflow/logs
+      - ../dags:/opt/airflow/dags
+      - logs_data:/opt/airflow/logs
 #      - ./config:/opt/airflow/config
 #      - ./plugins:/opt/airflow/plugins
       - ../af_requirements.txt:/bitnami/python/requirements.txt
