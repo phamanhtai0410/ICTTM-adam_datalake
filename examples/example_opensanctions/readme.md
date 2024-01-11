@@ -33,11 +33,11 @@ airflow webserver -p 8080
 Start MinIO using Docker, open new terminal and type:
 
 ```bash
-docker compose -f docker_resources/minio-docker-compose.yml
+docker compose -f docker_resources/minio-docker-compose.yml up -d
 ```
 
 - Open MinIO Web Interface  
-  Open a web browser and navigate to http://localhost:9000. Log in with the following credentials:
+  Open a web browser and navigate to http://localhost:9001. Log in with the following credentials:
 
 ```
 Username: ROOTNAME  
