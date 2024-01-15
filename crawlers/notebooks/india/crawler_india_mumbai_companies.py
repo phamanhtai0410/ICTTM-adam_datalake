@@ -1,0 +1,83 @@
+from bs4 import BeautifulSoup
+import cloudscraper
+import random
+import time
+
+
+def main():
+    proxies = [
+        '38.154.227.167:5868',
+        '185.199.229.156:7492',
+        '185.199.228.220:7300',
+        '185.199.231.45:8382',
+        '188.74.210.207:6286',
+        '188.74.183.10:8279',
+        '188.74.210.21:6100',
+        '45.155.68.129:8133',
+        '154.95.36.199:6893',
+        '45.94.47.66:8110',
+    ]
+
+    # Create a CloudScraper instance
+    scraper = cloudscraper.create_scraper()
+
+    file_path = 'data/output.txt'  # File path to save the elements
+
+    max_retries_per_page = 5  # Maximum number of retries for a page
+    sleep_duration_on_success = 0.3  # Duration to sleep after each successful response (in seconds)
+    total_pages = 12345  # Total number of pages to scrape
+
+    def print_progress(current_page, total_pages):
+        progress = (current_page / total_pages) * 100
+        print(f"Progress: {progress:.2f}% ({current_page}/{total_pages})", end='\r')
+
+    with open(file_path, 'w') as file:
+        page = 1
+        while page < total_pages:
+            current_retries = 0
+            success = False
+
+            while current_retries < max_retries_per_page and not success:
+                try:
+                    # Choose a random proxy for each request
+                    proxy = {"http": f"http://{random.choice(proxies)}"}
+                    url = f"https://www.zaubacorp.com/company-list/age-B/roc-RoC-Mumbai/p-{page}-company.html"
+                    response = scraper.get(url, proxies=proxy)
+
+                    # Check if we got a successful response
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.text, 'html.parser')
+                        table = soup.find('table', class_='table table-striped col-md-12 col-sm-12 col-xs-12')
+
+                        if table:
+                            links = table.find_all('a')
+                            for link in links:
+                                file.write(link.get('href') + '\n')  # Write each link to the file
+
+                            success = True  # Mark this page as successfully scraped
+                            time.sleep(sleep_duration_on_success)  # Sleep after a successful scrape
+                        else:
+                            print(f"No table found on page {page}.")
+                            break  # Stop the loop if no table is found
+                    else:
+                        print(f"Failed to retrieve page {page}: HTTP {response.status_code}")
+                        raise Exception(f"HTTP Error: {response.status_code}")
+
+                except Exception as e:
+                    current_retries += 1
+                    print(f"An error occurred for page {page}: {str(e)}")
+                    print(f"Attempt {current_retries} of {max_retries_per_page}. Retrying with a new proxy...")
+                    time.sleep(5)  # Wait for 5 seconds before retrying with a new proxy
+
+            if not success:
+                print(f"Failed to scrape page {page} after {max_retries_per_page} attempts.")
+                # Decide whether to break or continue with the next page
+                # break  # Uncomment this if you want to stop scraping completely
+            print_progress(page, total_pages)  # Print the progress
+            page += 1  # Go to the next page regardless of success
+
+    print("Finished scraping all pages or stopped due to errors.")
+
+
+if __name__ == "__main__":
+    main()
