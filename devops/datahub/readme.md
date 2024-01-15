@@ -1,0 +1,1 @@
+export DOCKER_HOST=unix:///home/harry/.docker/desktop/docker.sock

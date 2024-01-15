@@ -1,1 +1,1 @@
-sudo apt-get install default-jdk python3-venv
+sudo apt-get install default-jdk python3-venv s3fs
