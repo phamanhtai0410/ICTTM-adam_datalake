@@ -2,6 +2,23 @@ from bs4 import BeautifulSoup
 import cloudscraper
 import random
 import time
+from datetime import timedelta
+
+
+def print_progress(current_page, total_pages, start_time):
+    elapsed_time = time.time() - start_time
+    pages_left = total_pages - current_page
+    average_time_per_page = elapsed_time / current_page
+    estimated_time_remaining = pages_left * average_time_per_page
+
+    formatted_elapsed_time = str(timedelta(seconds=elapsed_time)).split(".")[0]  # Remove microseconds
+    formatted_estimated_remaining = str(timedelta(seconds=estimated_time_remaining)).split(".")[
+        0]  # Remove microseconds
+    progress = (current_page / total_pages) * 100
+
+    print(
+        f"Progress: {progress:.2f}% ({current_page}/{total_pages}) - Elapsed Time: {formatted_elapsed_time} - Remaining Time: {formatted_estimated_remaining}",
+        end='\r', flush=True)
 
 
 def main():
@@ -21,15 +38,12 @@ def main():
     # Create a CloudScraper instance
     scraper = cloudscraper.create_scraper()
 
-    file_path = 'data/output.txt'  # File path to save the elements
+    file_path = 'data/india_mumbai_roc_ageD.txt'  # File path to save the elements
 
     max_retries_per_page = 5  # Maximum number of retries for a page
-    sleep_duration_on_success = 0.3  # Duration to sleep after each successful response (in seconds)
-    total_pages = 12345  # Total number of pages to scrape
-
-    def print_progress(current_page, total_pages):
-        progress = (current_page / total_pages) * 100
-        print(f"Progress: {progress:.2f}% ({current_page}/{total_pages})", end='\r')
+    sleep_duration_on_success = random.uniform(0, 0.5)  # Duration to sleep after each successful response (in seconds)
+    total_pages = 2834  # Total number of pages to scrape
+    start_time = time.time()  # Record the start time
 
     with open(file_path, 'w') as file:
         page = 1
@@ -41,7 +55,7 @@ def main():
                 try:
                     # Choose a random proxy for each request
                     proxy = {"http": f"http://{random.choice(proxies)}"}
-                    url = f"https://www.zaubacorp.com/company-list/age-B/roc-RoC-Mumbai/p-{page}-company.html"
+                    url = f"https://www.zaubacorp.com/company-list/age-D/roc-RoC-Mumbai/p-{page}-company.html"
                     response = scraper.get(url, proxies=proxy)
 
                     # Check if we got a successful response
@@ -73,7 +87,7 @@ def main():
                 print(f"Failed to scrape page {page} after {max_retries_per_page} attempts.")
                 # Decide whether to break or continue with the next page
                 # break  # Uncomment this if you want to stop scraping completely
-            print_progress(page, total_pages)  # Print the progress
+            print_progress(page, total_pages, start_time)  # Print the progress
             page += 1  # Go to the next page regardless of success
 
     print("Finished scraping all pages or stopped due to errors.")
