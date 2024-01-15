@@ -3,6 +3,7 @@ import cloudscraper
 import random
 import time
 from datetime import timedelta
+from proxies_list import proxies_list as proxies
 
 
 def print_progress(current_page, total_pages, start_time):
@@ -22,27 +23,14 @@ def print_progress(current_page, total_pages, start_time):
 
 
 def main():
-    proxies = [
-        '38.154.227.167:5868',
-        '185.199.229.156:7492',
-        '185.199.228.220:7300',
-        '185.199.231.45:8382',
-        '188.74.210.207:6286',
-        '188.74.183.10:8279',
-        '188.74.210.21:6100',
-        '45.155.68.129:8133',
-        '154.95.36.199:6893',
-        '45.94.47.66:8110',
-    ]
-
     # Create a CloudScraper instance
     scraper = cloudscraper.create_scraper()
 
-    file_path = 'data/india_mumbai_roc_ageD.txt'  # File path to save the elements
+    file_path = 'data/india_mumbai_roc_ageE.txt'  # File path to save the elements
 
     max_retries_per_page = 5  # Maximum number of retries for a page
-    sleep_duration_on_success = random.uniform(0, 0.5)  # Duration to sleep after each successful response (in seconds)
-    total_pages = 2834  # Total number of pages to scrape
+    sleep_duration_on_success = random.uniform(0, 0.3)  # Duration to sleep after each successful response (in seconds)
+    total_pages = 4548  # Total number of pages to scrape
     start_time = time.time()  # Record the start time
 
     with open(file_path, 'w') as file:
@@ -55,7 +43,7 @@ def main():
                 try:
                     # Choose a random proxy for each request
                     proxy = {"http": f"http://{random.choice(proxies)}"}
-                    url = f"https://www.zaubacorp.com/company-list/age-D/roc-RoC-Mumbai/p-{page}-company.html"
+                    url = f"https://www.zaubacorp.com/company-list/age-E/roc-RoC-Mumbai/p-{page}-company.html"
                     response = scraper.get(url, proxies=proxy)
 
                     # Check if we got a successful response
