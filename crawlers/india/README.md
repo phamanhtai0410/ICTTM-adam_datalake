@@ -1,6 +1,6 @@
 # India Company Crawler
 
-This Python script crawls the Zauba Corp website to extract company listing data from pages pertaining to companies registered in Kanpur, India.
+This Python script crawls the Zauba Corp website to extract company listing data from pages pertaining to companies registered in India.
 
 It uses the Cloudscraper library to perform HTTP requests with randomized user-agent headers and TLS/SSL protocols to bypass certain anti-bot protections. Proxies are also cycled randomly for each request to avoid detection.
 
@@ -27,12 +27,9 @@ It uses the Cloudscraper library to perform HTTP requests with randomized user-a
 ### Logic Diagram
 ![alt text](diagram/crawler_indian_companies.svg)
 
-## Setup
+## Usage
 
-Install Python dependencies:
-```commandline
-pip install -r requirements_india.txt
-```
+Copy new crawler, rename it depend on RoC-City.
 
 Update the configuration variables at the top of crawler_india_{city}_companies.py file:
 
@@ -48,9 +45,8 @@ page_start: Starting page number
 
 url: Base URL template string
 
-## Usage
 
-Run the scraper:
+### Run the scraper:
 
 Example:
 ```commandline
@@ -68,7 +64,11 @@ Reduce max_retries_per_page if failing too often to avoid excessive retries
 
 Increase concurrency by launching multiple scraper instances with different page_start/end chunks
 
+
 ### Alert
 Let me know if any other part of the documentation needs explanation or improvement!
 
+#### Contact
 Long Phan (ICTTM)
+
+Email: long@icttm.net
