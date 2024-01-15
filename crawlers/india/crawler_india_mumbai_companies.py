@@ -13,12 +13,13 @@ def print_progress(current_page, total_pages, start_time):
     estimated_time_remaining = pages_left * average_time_per_page
 
     formatted_elapsed_time = str(timedelta(seconds=elapsed_time)).split(".")[0]  # Remove microseconds
-    formatted_estimated_remaining = str(timedelta(seconds=estimated_time_remaining)).split(".")[
-        0]  # Remove microseconds
+    formatted_estimated_remaining = str(timedelta(seconds=estimated_time_remaining)).split(".")[0]  # Remove
+    # microseconds
     progress = (current_page / total_pages) * 100
 
     print(
-        f"Progress: {progress:.2f}% ({current_page}/{total_pages}) - Elapsed Time: {formatted_elapsed_time} - Remaining Time: {formatted_estimated_remaining}",
+        f"Progress: {progress:.2f}% ({current_page}/{total_pages}) - Elapsed Time: {formatted_elapsed_time} - "
+        f"Remaining Time: {formatted_estimated_remaining}",
         end='\r', flush=True)
 
 
@@ -42,7 +43,7 @@ def main():
             while current_retries < max_retries_per_page and not success:
                 try:
                     # Choose a random proxy for each request
-                    proxy = {"http": f"http://{random.choice(proxies)}"}
+                    proxy = {"http": f"https://{random.choice(proxies)}"}
                     url = f"https://www.zaubacorp.com/company-list/age-E/roc-RoC-Mumbai/p-{page}-company.html"
                     response = scraper.get(url, proxies=proxy)
 
