@@ -1,7 +1,7 @@
 import cloudscraper
 import random
 
-from crawlers.india.engine.crawler_engine import crawler_engine
+from engines.crawler_engine import crawler
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     total_pages = 5921  # Total number of pages to scrape
     page_start = 1
     url = f"https://www.zaubacorp.com/company-list/age-F/roc-RoC-Mumbai/p-{page_start}-company.html"
-    crawler_engine(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url, page_start)
+    crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url, page_start)
 
 
 if __name__ == "__main__":
