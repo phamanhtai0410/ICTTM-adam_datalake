@@ -14,8 +14,8 @@ def print_progress(current_page, total_pages, start_time, proxy_url):
     progress = (current_page / total_pages) * 100
     proxy_url_string = proxy_url.split("://")[1].split(":")[0]
     print(
+        f"Using proxy: {proxy_url_string} - "
         f"Progress: {progress:.2f}% ({current_page}/{total_pages}) - Elapsed Time: {formatted_elapsed_time} - "
-        f"Remaining Time: {formatted_estimated_remaining} - "
-        f"Using proxy: {proxy_url_string}",
+        f"Remaining Time: {formatted_estimated_remaining}",
         end='\r', flush=True
     )

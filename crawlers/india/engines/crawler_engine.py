@@ -8,8 +8,7 @@ import signal
 from bs4 import BeautifulSoup
 from engines.tool.proxies_bank import proxies
 from engines.tool.print_helper import print_progress
-from engines.tool.support import decode_email, scrape_infor_page_company
-from engines.tool.support import signal_handler
+from engines.tool.support import decode_email, scrape_infor_page_company, filter_company
 
 
 def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url_base, page):
@@ -63,9 +62,8 @@ def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duratio
 
     print("Finished scraping all pages or stopped due to errors.")
 
-global idx_company
 
-def crawler_info_companies(input_file_path, output_file_path, index_remaining_file, max_retries_per_page, scraper, sleep_duration_on_success):
+def crawler_info_companies(input_file_path, output_file_path, max_retries_per_page, scraper, sleep_duration_on_success):
     with open(input_file_path, 'r') as input_file:
         urls_companies = [line.strip() for line in input_file.readlines()]
 
@@ -76,53 +74,46 @@ def crawler_info_companies(input_file_path, output_file_path, index_remaining_fi
     shuffled_proxies_list = proxies.copy()
     random.shuffle(shuffled_proxies_list)
     proxy_cycle = cycle(shuffled_proxies_list)
-    global companies_data_list
     companies_data_list = []
 
-    signal.signal(signal.SIGINT, signal_handler(idx_company=idx_company, index_file=index_remaining_file,
-                                                master_companies_data=companies_data_list,
-                                                master_companies_path=output_file_path))
+    with open(output_file_path, 'a') as output_file:
+        while idx_company < total_companies:
+            current_retries = 0
+            success = False
+            while current_retries < max_retries_per_page and not success:
+                try:
+                    # Choose a random proxy for each request
+                    proxy_iter = next(proxy_cycle)
+                    proxy = {"http": f"https://{proxy_iter}"}
+                    response = scraper.get(urls_companies[idx_company], proxies=proxy)
+                    # Check if we got a successful response
+                    if response.status_code == 200:
+                        soup = BeautifulSoup(response.content, 'html.parser')
+                        company_infor = scrape_infor_page_company(soup)
 
-    while idx_company < total_companies:
-        current_retries = 0
-        success = False
-        while current_retries < max_retries_per_page and not success:
-            try:
-                # Choose a random proxy for each request
-                proxy_iter = next(proxy_cycle)
-                proxy = {"http": f"https://{proxy_iter}"}
-                response = scraper.get(urls_companies[idx_company], proxies=proxy)
-                # Check if we got a successful response
-                if response.status_code == 200:
-                    soup = BeautifulSoup(response.content, 'html.parser')
-                    company_infor = scrape_infor_page_company(soup)
-                    companies_data_list.append(company_infor)
-
-                    success = True  # Mark this page as successfully scraped
-                    time.sleep(sleep_duration_on_success)  # Sleep after a successful scrape
-                else:
-                    print(f"Failed to retrieve page {idx_company}: HTTP {response.status_code}")
-                    raise Exception(f"HTTP Error: {response.status_code}")
-
-            except Exception as e:
-                current_retries += 1
-                print(f"An error occurred for page {idx_company}: {str(e)}")
-                print(f"Attempt {current_retries} of {max_retries_per_page}. Retrying with a new proxy...")
-                time.sleep(5)  # Wait for 5 seconds before retrying with a new proxy
-            except KeyboardInterrupt:
-                print('Exit directly on KeyboardInterrupt')
-
-        if not success:
-            print(f"Failed to scrape page {idx_company} after {max_retries_per_page} attempts.")
-            # Decide whether to break or continue with the next page
-            # break  # Uncomment this if you want to stop scraping completely
-        idx_company += 1  # Go to the next page regardless of success
-        print_progress(idx_company, total_companies, start_time, proxy["http"])  # Print the progress
-
-    with open(output_file_path, 'w') as output_file:
-        json.dump(companies_data_list, output_file)
+                        company_infor = filter_company(company_infor)
 
 
+                        json.dump(company_infor, output_file)
+                        output_file.write('\n')
 
+                        success = True  # Mark this page as successfully scraped
+                        time.sleep(sleep_duration_on_success)  # Sleep after a successful scrape
+                    else:
+                        print(f"Failed to retrieve page {idx_company}: HTTP {response.status_code}")
+                        raise Exception(f"HTTP Error: {response.status_code}")
+
+                except Exception as e:
+                    current_retries += 1
+                    print(f"An error occurred for page {idx_company}: {str(e)}")
+                    print(f"Attempt {current_retries} of {max_retries_per_page}. Retrying with a new proxy...")
+                    time.sleep(5)  # Wait for 5 seconds before retrying with a new proxy
+
+            if not success:
+                print(f"Failed to scrape page {idx_company} after {max_retries_per_page} attempts.")
+                # Decide whether to break or continue with the next page
+                # break  # Uncomment this if you want to stop scraping completely
+            idx_company += 1  # Go to the next page regardless of success
+            print_progress(idx_company, total_companies, start_time, proxy["http"])  # Print the progress
 
     print("Finished scraping all pages or stopped due to errors.")
