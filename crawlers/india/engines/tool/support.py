@@ -1,10 +1,10 @@
+import sys
 def decode_email(code_str):
     email = ''.join([chr(int(code_str[i:i + 2], 16) ^ int(code_str[:2], 16))
                      for i in range(2, len(code_str), 2)])
     return email
 
-
-def crawler_one_company(soup):
+def scrape_infor_page_company(soup):
     # Initialize dictionaries to store company information
     company_infor = {}
     director_dict = {}
@@ -42,3 +42,23 @@ def crawler_one_company(soup):
     # Add the company address to the company information dictionary
     company_infor['Address'] = address
     return company_infor
+
+
+def signal_handler(idx_company, master_companies_data, master_companies_path, index_file):
+    print('Ctrl-C pressed, saving state...')
+
+    try:
+        with open(index_file, 'w') as f:
+            f.write(str(idx_company))
+
+        with open(master_companies_path, 'r') as file:
+            file.read(master_companies_data)
+
+
+    except Exception as e:
+        print('Error saving index', e)
+
+    sys.exit(0)
+
+
+
