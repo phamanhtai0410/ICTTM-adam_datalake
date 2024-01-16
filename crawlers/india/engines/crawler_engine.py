@@ -2,11 +2,14 @@ import random
 import time
 from itertools import cycle
 import json
+import signal
+
 
 from bs4 import BeautifulSoup
 from engines.tool.proxies_bank import proxies
 from engines.tool.print_helper import print_progress
-from engines.tool.support import decode_email, crawler_one_company
+from engines.tool.support import decode_email, scrape_infor_page_company
+from engines.tool.support import signal_handler
 
 
 def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url_base, page):
@@ -60,8 +63,9 @@ def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duratio
 
     print("Finished scraping all pages or stopped due to errors.")
 
+global idx_company
 
-def crawler_info_companies(input_file_path, output_file_path, max_retries_per_page, scraper, sleep_duration_on_success):
+def crawler_info_companies(input_file_path, output_file_path, index_remaining_file, max_retries_per_page, scraper, sleep_duration_on_success):
     with open(input_file_path, 'r') as input_file:
         urls_companies = [line.strip() for line in input_file.readlines()]
 
@@ -72,7 +76,13 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
     shuffled_proxies_list = proxies.copy()
     random.shuffle(shuffled_proxies_list)
     proxy_cycle = cycle(shuffled_proxies_list)
+    global companies_data_list
     companies_data_list = []
+
+    signal.signal(signal.SIGINT, signal_handler(idx_company=idx_company, index_file=index_remaining_file,
+                                                master_companies_data=companies_data_list,
+                                                master_companies_path=output_file_path))
+
     while idx_company < total_companies:
         current_retries = 0
         success = False
@@ -85,7 +95,7 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
                 # Check if we got a successful response
                 if response.status_code == 200:
                     soup = BeautifulSoup(response.content, 'html.parser')
-                    company_infor = crawler_one_company(soup)
+                    company_infor = scrape_infor_page_company(soup)
                     companies_data_list.append(company_infor)
 
                     success = True  # Mark this page as successfully scraped
@@ -99,6 +109,8 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
                 print(f"An error occurred for page {idx_company}: {str(e)}")
                 print(f"Attempt {current_retries} of {max_retries_per_page}. Retrying with a new proxy...")
                 time.sleep(5)  # Wait for 5 seconds before retrying with a new proxy
+            except KeyboardInterrupt:
+                print('Exit directly on KeyboardInterrupt')
 
         if not success:
             print(f"Failed to scrape page {idx_company} after {max_retries_per_page} attempts.")
@@ -109,5 +121,8 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
 
     with open(output_file_path, 'w') as output_file:
         json.dump(companies_data_list, output_file)
+
+
+
 
     print("Finished scraping all pages or stopped due to errors.")
