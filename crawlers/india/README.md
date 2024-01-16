@@ -4,7 +4,13 @@ This Python script crawls the Zauba Corp website to extract company listing data
 
 It uses the Cloudscraper library to perform HTTP requests with randomized user-agent headers and TLS/SSL protocols to bypass certain anti-bot protections. Proxies are also cycled randomly for each request to avoid detection.
 
-## Logic Process
+
+The India crawler is divided into 2 phases:
+- **Phase 1**: Scraping the URLs of each company
+
+- **Phase 2**: Based on the URLs of each company, we proceed to scrape the information of each company
+## PHASE 1:
+### Logic Process
 
     Initialize start time and shuffled proxy list
     
@@ -27,8 +33,10 @@ It uses the Cloudscraper library to perform HTTP requests with randomized user-a
 ### Logic Diagram
 ![alt text](diagram/crawler_indian_companies.svg)
 
-## Usage
-
+### Usage
+```commandline
+pip install requirements_india.txt
+```
 Copy new crawler, rename it depend on RoC-City.
 
 Update the configuration variables at the top of crawler_india_{city}_companies.py file:
@@ -50,13 +58,52 @@ url: Base URL template string
 
 Example:
 ```commandline
-python3 crawler_india_kanpur_companies.py
+python3 crawler_india_mumbai_companies.py
 ```
 The output will be scraped company links/data saved to the specified file path. It will cycle through randomly selected proxy servers on each request to avoid detection.
 
 Progress is printed periodically to stdout including elapsed/estimated remaining time.
 
-Notes:
+## PHASE 2:
+### Logic Process
+
+    Read urls list    
+
+    Initialize start time and shuffled proxy list
+    
+    Loop from url to urls
+    
+        Set retry count and success flag
+    
+        Retry request with random proxy until success or max retries
+    
+            Scrape data on success 
+    
+            Sleep, handle errors, increment retry count on failure
+    
+        Print progress
+    
+        Increment page number
+    
+    Write data to output file
+
+    Print finished message
+
+### Logic Diagram
+![alt text](diagram/crawler_infor_indian_companies.svg)
+
+
+### Run the scraper:
+
+Example:
+```commandline
+python3 get_infor_mumbai_companies.py
+```
+The output will be scraped information data company links/data saved to the specified file path. It will cycle through randomly selected proxy servers on each request to avoid detection.
+
+Progress is printed periodically to stdout including elapsed/estimated remaining time.
+
+### Notes:
 
 Increase sleep_duration_on_success for less aggressive scraping to avoid getting blocked
 
@@ -68,7 +115,11 @@ Increase concurrency by launching multiple scraper instances with different page
 ### Alert
 Let me know if any other part of the documentation needs explanation or improvement!
 
-#### Contact
-Long Phan (ICTTM)
+### Contact
+- Long Phan *(ICTTM)*
 
-Email: long@icttm.net
+**Email:** long@icttm.net
+
+- Xuan Phuoc *(ICTTM)*
+
+ **Email**: phuoc@icttm.net

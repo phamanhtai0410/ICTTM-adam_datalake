@@ -15,6 +15,5 @@ def main():
     url = f"https://www.zaubacorp.com/company-list/roc-RoC-Ahmedabad/p-"
     crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url, page_start)
 
-
 if __name__ == "__main__":
     main()
