@@ -1,7 +1,9 @@
 def decode_email(code_str):
-    email = ''.join([chr(int(code_str[i:i+2], 16) ^ int(code_str[:2], 16))
+    email = ''.join([chr(int(code_str[i:i + 2], 16) ^ int(code_str[:2], 16))
                      for i in range(2, len(code_str), 2)])
     return email
+
+
 def crawler_one_company(soup):
     # Initialize dictionaries to store company information
     company_infor = {}

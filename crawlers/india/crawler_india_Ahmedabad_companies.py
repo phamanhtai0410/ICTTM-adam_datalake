@@ -12,7 +12,7 @@ def main():
     sleep_duration_on_success = random.uniform(0, 0.2)  # Duration to sleep after each successful response (in seconds)
     total_pages = 5164  # Total number of pages to scrape
     page_start = 1
-    url = f"https://www.zaubacorp.com/company-list/roc-RoC-Ahmedabad/p-{page_start}-company.html"
+    url = f"https://www.zaubacorp.com/company-list/roc-RoC-Ahmedabad/p-"
     crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url, page_start)
 
 

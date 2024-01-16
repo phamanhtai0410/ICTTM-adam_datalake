@@ -4,25 +4,26 @@ from itertools import cycle
 import json
 
 from bs4 import BeautifulSoup
-from engines.proxies_bank import proxies
-from engines.print_helper import print_progress
-from engines.support import decode_email, crawler_one_company
+from engines.tool.proxies_bank import proxies
+from engines.tool.print_helper import print_progress
+from engines.tool.support import decode_email, crawler_one_company
 
 
-
-def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url, page):
+def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duration_on_success, url_base, page):
     start_time = time.time()  # Record the start time
-    shuffled_proxies_list = proxies.copy()
+    shuffled_proxies_list = proxies
     random.shuffle(shuffled_proxies_list)
+    proxy_cycle = cycle(shuffled_proxies_list)
     with open(file_path, 'w') as file:
         while page <= total_pages:
             current_retries = 0
             success = False
-
+            url = f"{url_base}{page}-company.html"
             while current_retries < max_retries_per_page and not success:
                 try:
                     # Choose a random proxy for each request
-                    proxy = {"http": f"https://{cycle(shuffled_proxies_list)}"}
+                    proxy_iter = next(proxy_cycle)
+                    proxy = {"http": f"https://{proxy_iter}"}
                     response = scraper.get(url, proxies=proxy)
                     # Check if we got a successful response
                     if response.status_code == 200:
@@ -53,13 +54,14 @@ def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duratio
                 print(f"Failed to scrape page {page} after {max_retries_per_page} attempts.")
                 # Decide whether to break or continue with the next page
                 # break  # Uncomment this if you want to stop scraping completely
-            print_progress(page, total_pages, start_time, proxy)  # Print the progress
+
+            print_progress(page, total_pages, start_time, proxy["http"])  # Print the progress
             page += 1  # Go to the next page regardless of success
 
     print("Finished scraping all pages or stopped due to errors.")
 
-def crawler_info_companies(input_file_path, output_file_path, max_retries_per_page, scraper, sleep_duration_on_success):
 
+def crawler_info_companies(input_file_path, output_file_path, max_retries_per_page, scraper, sleep_duration_on_success):
     with open(input_file_path, 'r') as input_file:
         urls_companies = [line.strip() for line in input_file.readlines()]
 
@@ -69,7 +71,7 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
     start_time = time.time()  # Record the start time
     shuffled_proxies_list = proxies.copy()
     random.shuffle(shuffled_proxies_list)
-
+    proxy_cycle = cycle(shuffled_proxies_list)
     companies_data_list = []
     while idx_company < total_companies:
         current_retries = 0
@@ -77,7 +79,8 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
         while current_retries < max_retries_per_page and not success:
             try:
                 # Choose a random proxy for each request
-                proxy = {"http": f"https://{cycle(shuffled_proxies_list)}"}
+                proxy_iter = next(proxy_cycle)
+                proxy = {"http": f"https://{proxy_iter}"}
                 response = scraper.get(urls_companies[idx_company], proxies=proxy)
                 # Check if we got a successful response
                 if response.status_code == 200:
@@ -102,8 +105,7 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
             # Decide whether to break or continue with the next page
             # break  # Uncomment this if you want to stop scraping completely
         idx_company += 1  # Go to the next page regardless of success
-        print_progress(idx_company, total_companies, start_time, proxy)  # Print the progress
-
+        print_progress(idx_company, total_companies, start_time, proxy["http"])  # Print the progress
 
     with open(output_file_path, 'w') as output_file:
         json.dump(companies_data_list, output_file)
