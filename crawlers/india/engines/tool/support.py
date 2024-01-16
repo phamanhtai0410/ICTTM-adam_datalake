@@ -43,22 +43,11 @@ def scrape_infor_page_company(soup):
     company_infor['Address'] = address
     return company_infor
 
+def filter_company(company_infor):
+    company_infor = {key: value for key, value in company_infor.items() if "Login to view" not in value
+                     or "N\A" not in value}
+    del company_infor['Age of Company']
+    del company_infor['Number of Employees']
 
-def signal_handler(idx_company, master_companies_data, master_companies_path, index_file):
-    print('Ctrl-C pressed, saving state...')
-
-    try:
-        with open(index_file, 'w') as f:
-            f.write(str(idx_company))
-
-        with open(master_companies_path, 'r') as file:
-            file.read(master_companies_data)
-
-
-    except Exception as e:
-        print('Error saving index', e)
-
-    sys.exit(0)
-
-
+    return company_infor
 
