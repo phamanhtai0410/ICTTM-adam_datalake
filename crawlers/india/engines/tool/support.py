@@ -1,8 +1,11 @@
 import sys
+
+
 def decode_email(code_str):
     email = ''.join([chr(int(code_str[i:i + 2], 16) ^ int(code_str[:2], 16))
                      for i in range(2, len(code_str), 2)])
     return email
+
 
 def scrape_infor_page_company(soup):
     # Initialize dictionaries to store company information
@@ -43,6 +46,7 @@ def scrape_infor_page_company(soup):
     company_infor['Address'] = address
     return company_infor
 
+
 def filter_company(company_infor):
     company_infor = {key: value for key, value in company_infor.items() if "Login to view" not in value
                      or "N\A" not in value}
@@ -50,4 +54,3 @@ def filter_company(company_infor):
     del company_infor['Number of Employees']
 
     return company_infor
-

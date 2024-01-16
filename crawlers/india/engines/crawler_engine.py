@@ -4,7 +4,6 @@ from itertools import cycle
 import json
 import signal
 
-
 from bs4 import BeautifulSoup
 from engines.tool.proxies_bank import proxies
 from engines.tool.print_helper import print_progress
@@ -92,7 +91,6 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
                         company_infor = scrape_infor_page_company(soup)
 
                         company_infor = filter_company(company_infor)
-
 
                         json.dump(company_infor, output_file)
                         output_file.write('\n')
