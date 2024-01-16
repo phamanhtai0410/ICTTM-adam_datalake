@@ -4,7 +4,13 @@ This Python script crawls the Zauba Corp website to extract company listing data
 
 It uses the Cloudscraper library to perform HTTP requests with randomized user-agent headers and TLS/SSL protocols to bypass certain anti-bot protections. Proxies are also cycled randomly for each request to avoid detection.
 
-## Logic Process
+
+The India crawler is divided into 2 phases:
+- **Phase 1**: Scraping the URLs of each company
+
+- **Phase 2**: Based on the URLs of each company, we proceed to scrape the information of each company
+## PHASE 1:
+### Logic Process
 
     Initialize start time and shuffled proxy list
     
@@ -64,11 +70,17 @@ Reduce max_retries_per_page if failing too often to avoid excessive retries
 
 Increase concurrency by launching multiple scraper instances with different page_start/end chunks
 
+## PHASE 2:
+
 
 ### Alert
 Let me know if any other part of the documentation needs explanation or improvement!
 
-#### Contact
-Long Phan (ICTTM)
+### Contact
+- Long Phan (ICTTM)
 
-Email: long@icttm.net
+**Email:** long@icttm.net
+
+- Xuan Phuoc (ICTTM)
+
+ **Email**: phuoc@icttm.net
