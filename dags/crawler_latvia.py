@@ -1,30 +1,24 @@
 from airflow import DAG
 from airflow.operators.python import PythonOperator
 import requests
+from tqdm import tqdm
 import os
 from zipfile import ZipFile
 import time
 import datetime
-from tqdm import tqdm
-
 current_dir = os.path.dirname(os.path.abspath(__file__))
 
-def get_gleif_data():
-    print('GLEIF Crawling -------------------')
-    url = "https://goldencopy.gleif.org/api/v2/golden-copies/publishes"
-    response = requests.get(url)
-    if response.status_code != 200:
-        raise Exception("API response: {}".format(response.status_code))
-    
-    gleif_data = response.json()
-    data = gleif_data['data'][0]
+def get_latvia_data():
+    print('Latvia Crawling -------------------')
+    data = "https://dati.ur.gov.lv/register/register.csv"
     return data
 
 def get_url_download_csv():
-    data = get_gleif_data()
-    url = data['lei2']['full_file']["csv"]["url"]
-    size = data['lei2']['full_file']["csv"]["size"]
+    data = get_latvia_data()
+    url = data
+    size = 0
     return url, size
+
 
 def download_file_from_url():
     """
@@ -34,10 +28,10 @@ def download_file_from_url():
     file_name = url_download.split('/')[-1]
     
     # Check folder data exist or not, if not create folder data
-    if not os.path.exists(os.path.join(current_dir, 'data-gleif')):
-        os.makedirs(os.path.join(current_dir, 'data-gleif'))
-
-    file_path = os.path.join(current_dir, 'data-gleif', file_name)
+    if not os.path.exists(os.path.join(current_dir, 'data-latvia')):
+        os.makedirs(os.path.join(current_dir, 'data-latvia'))
+    
+    file_path = os.path.join(current_dir, 'data-latvia', file_name)
     print('file_path', file_path)
     
     retries = 3  # Number of retries
@@ -58,7 +52,12 @@ def download_file_from_url():
                     file.write(data)
             
             progress_bar.close()
-            return file_path
+            
+            # Rename the file to data.csv
+            new_file_path = os.path.join(current_dir, 'data-latvia', 'data.csv')
+            os.rename(file_path, new_file_path)
+            
+            return new_file_path
         
         except requests.exceptions.ChunkedEncodingError as e:
             if attempt < retries - 1:
@@ -67,33 +66,15 @@ def download_file_from_url():
             else:
                 raise e
             
-def extract_zip_file():
-    """
-    Extract zip file and rename CSV file to data.csv
-    """
-    # current_date = datetime.datetime.now().strftime("%Y%m%d")
-    file_path = download_file_from_url()
-    extract_folder = os.path.join(current_dir, 'data-gleif')
-    with ZipFile(file_path, 'r') as zipObj:
-        for file in zipObj.namelist():
-            if file.endswith('.csv'):
-                zipObj.extract(file, extract_folder)
-                new_file_path = os.path.join(extract_folder, file)
-                new_file_name = os.path.join(extract_folder, 'data.csv')
-                os.rename(new_file_path, new_file_name)
-    #Remove zip file after extract
-    os.remove(file_path)
-    return new_file_name
-
 with DAG(
-        dag_id='gleif_crawler',
+        dag_id='latvia_crawler',
         start_date=datetime.datetime(2023, 12, 23),
         schedule=None,
         catchup=False
 ) as dag:
     download_task = PythonOperator(
         task_id='download_file',
-        python_callable=extract_zip_file,
+        python_callable=download_file_from_url,
     )
     
 if __name__ == "__main__":
