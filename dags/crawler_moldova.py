@@ -9,6 +9,7 @@ import datetime
 import boto3
 from airflow.models import Variable
 from airflow.exceptions import AirflowException
+import pandas as pd
 
 object_storage_access_key = Variable.get("objs3_access_key", "demo-access-key")
 object_storage_secret_key = Variable.get("objs3_secret_key", 'demo-secret-key')
@@ -37,6 +38,16 @@ def get_url_download_xlsx():
     data = get_moldova_data()
     url = data
     return url , 0
+
+def convert_xlsx_to_csv(file_path):
+    # Read the xlsx file
+    df = pd.read_excel(file_path, skiprows=1)  # Skip the first row
+    
+    # Convert to csv
+    csv_file_path = file_path.replace('.xlsx', '.csv')
+    df.to_csv(csv_file_path, index=False)
+    
+    return csv_file_path
 
 def download_file_from_url():
     """
@@ -71,10 +82,16 @@ def download_file_from_url():
                     file.write(data)
             
             progress_bar.close()
+
+
             # Rename the file to data.csv
-            new_file_path = os.path.join(current_dir, 'data-moldova', 'data.csv')
-            os.rename(file_path, new_file_path)
-            return file_path
+            new_file_path = convert_xlsx_to_csv(file_path)
+            os.rename(new_file_path, os.path.join(current_dir, 'data-moldova', 'data.csv'))
+            
+            # Remove the xlsx file
+            os.remove(file_path)
+            
+            return new_file_path
         
         except requests.exceptions.ChunkedEncodingError as e:
             if attempt < retries - 1:
@@ -102,10 +119,10 @@ with DAG(
         schedule=None,
         catchup=False
 ) as dag:
-    # download_task = PythonOperator(
-    #     task_id='download_file',
-    #     python_callable=download_file_from_url,
-    # )
+    download_task = PythonOperator(
+        task_id='download_file',
+        python_callable=download_file_from_url,
+    )
     upload_task = PythonOperator(
         task_id='upload_file',
         python_callable=upload_file_to_minio,
@@ -114,7 +131,7 @@ with DAG(
                    'minio_object_name': 'files/moldova.file/data.csv'}
     )
 
-    # download_task >> upload_task  # Set dependencies
+    download_task >> upload_task  # Set dependencies
     
 if __name__ == "__main__":
     dag.test()
