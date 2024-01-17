@@ -33,7 +33,7 @@ def main():
     # Create a CloudScraper instance
     scraper = cloudscraper.create_scraper()
 
-    file_path = 'data/page_india_Bangalore_roc.txt'  # File path to save the elements
+    file_path = 'url/page_india_Bangalore_roc.txt'  # File path to save the elements
 
     max_retries_per_page = 5  # Maximum number of retries for a page
     sleep_duration_on_success = 0.5  # Duration to sleep after each successful response (in seconds)
