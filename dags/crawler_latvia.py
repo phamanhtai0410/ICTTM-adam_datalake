@@ -84,6 +84,8 @@ def upload_file_to_minio(file_path, minio_bucket, minio_object_name):
                             verify=False
                             )
         s3c.Bucket(minio_bucket).upload_file(file_path, minio_object_name)
+        #remove folder data-moldova
+        os.system('rm -rf ' + os.path.join(current_dir, 'data-latvia'))
     except Exception as e:
         raise AirflowException(f"Failed to upload file to Minio: {str(e)}")
 
