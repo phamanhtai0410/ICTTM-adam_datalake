@@ -1,7 +1,8 @@
-# Default ignored files
 .idea
 .venv
 venv
+data
+crawlers/india/data
 */data/*
 *__pycache__*
 *.pyc
