@@ -2,7 +2,6 @@
 .venv
 venv
 data
-crawlers/india/data
 *__pycache__*
 *.pyc
 *.DS_Store
