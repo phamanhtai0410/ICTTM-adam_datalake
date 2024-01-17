@@ -3,3 +3,10 @@
 venv
 data
 crawlers/india/data
+*/data/*
+*__pycache__*
+*.pyc
+*.DS_Store
+*nss_group*
+*nss_passwd*
+data*/
