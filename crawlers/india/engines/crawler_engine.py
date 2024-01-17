@@ -16,7 +16,7 @@ def crawler(file_path, total_pages, max_retries_per_page, scraper, sleep_duratio
     random.shuffle(shuffled_proxies_list)
     proxy_cycle = cycle(shuffled_proxies_list)
     with open(file_path, 'w') as file:
-        while page <= total_pages:
+        while page <= 20:
             current_retries = 0
             success = False
             url = f"{url_base}{page}-company.html"
@@ -73,7 +73,6 @@ def crawler_info_companies(input_file_path, output_file_path, max_retries_per_pa
     shuffled_proxies_list = proxies.copy()
     random.shuffle(shuffled_proxies_list)
     proxy_cycle = cycle(shuffled_proxies_list)
-    companies_data_list = []
 
     with open(output_file_path, 'a') as output_file:
         while idx_company < total_companies:

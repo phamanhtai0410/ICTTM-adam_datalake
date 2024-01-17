@@ -48,8 +48,8 @@ def scrape_infor_page_company(soup):
 
 
 def filter_company(company_infor):
-    company_infor = {key: value for key, value in company_infor.items() if "Login to view" not in value
-                     or "N\A" not in value}
+    company_infor = {key: value for key, value in company_infor.items() if ("Login to view" not in value
+                     or "N/A" not in value)}
     del company_infor['Age of Company']
     del company_infor['Number of Employees']
 
