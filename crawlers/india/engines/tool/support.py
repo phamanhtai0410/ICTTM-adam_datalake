@@ -31,8 +31,8 @@ def scrape_infor_page_company(soup):
     company_infor['Directors'] = director_dict
 
     # Get the company email if available
-    if soup.find('a', class_='_cf_email_'):
-        company_infor['Email'] = decode_email(soup.find('a', class_='_cf_email_')['data-cfemail'])
+    if soup.find('a', class_='__cf_email__'):
+        company_infor['Email'] = decode_email(soup.find('a', class_='__cf_email__')['data-cfemail'])
 
     # Get the company address
     class_tags = soup.find_all('div', class_='col-lg-6 col-md-6 col-sm-12 col-xs-12')
